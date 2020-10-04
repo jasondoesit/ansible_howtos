@@ -1,0 +1,39 @@
+---
+
+- hosts: all
+  gather_facts: false
+  connection: local
+
+  vars:
+
+    #
+    # (Development Environment)
+    #
+    vault_development_password: "SuperPrivateDevelopmentPassword"
+
+    #
+    # (Production Environment)
+    #
+    vault_production_password: "SuperPrivateProductionPassword"
+
+    #
+    # Variable to represents the current lifecycle environment.
+    #
+    environments:
+      - "development"
+      - "production"
+
+    #
+    # User credential(s)
+    #
+    username: "fwondergums"
+    password: ""
+
+  tasks:
+
+    - name: "Display the contents of the password variable by each lifecycle environment."
+      debug:
+        msg: "My credentials for the: {{ item }} lifecycle environment are: {{ username }} using the secret: {{ password }}"
+      vars:
+        password: "{{ lookup('vars', 'vault_' + item + '_password') }}"
+      loop: "{{ environments }}"
